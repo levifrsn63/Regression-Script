@@ -6,14 +6,15 @@ import os
 
 print("=== Regression Tool ===")
 print("1. Manual entry")
-print("2. Load from CSV file\n")
+print("2. Load from single CSV file")
+print("3. Load X and Y from two separate CSV files\n")
 
-choice = input("Select option (1 or 2): ").strip()
+choice = input("Select option (1, 2, or 3): ").strip()
 
 X, y = [], []
 
 if choice == "2":
-    # List CSV files in current folder
+    # Single CSV with both columns
     files = [f for f in os.listdir() if f.endswith(".csv")]
     if not files:
         print("No CSV files found in this folder.")
@@ -41,7 +42,44 @@ if choice == "2":
         print("Invalid column names.")
         exit()
 
+elif choice == "3":
+    # Two CSVs: one with X, one with Y
+    files = [f for f in os.listdir() if f.endswith(".csv")]
+    if len(files) < 2:
+        print("Need at least 2 CSV files in folder.")
+        exit()
+
+    print("\nAvailable CSV files:")
+    for i, f in enumerate(files, start=1):
+        print(f"{i}. {f}")
+
+    try:
+        idx_x = int(input("\nSelect file number for X: ")) - 1
+        idx_y = int(input("Select file number for Y: ")) - 1
+        df_x = pd.read_csv(files[idx_x])
+        df_y = pd.read_csv(files[idx_y])
+    except:
+        print("Invalid selection.")
+        exit()
+
+    print("\nX file columns:", list(df_x.columns))
+    print("Y file columns:", list(df_y.columns))
+
+    x_col = input("Enter column name for X: ").strip()
+    y_col = input("Enter column name for Y: ").strip()
+
+    try:
+        X = df_x[[x_col]].values
+        y = df_y[y_col].values
+        if len(X) != len(y):
+            print("ERROR: X and Y lengths do not match.")
+            exit()
+    except:
+        print("Invalid column names.")
+        exit()
+
 else:
+    # Manual entry
     print("\nEnter data points (x and y). Type 'done' when finished.\n")
     while True:
         entry = input("x,y (or 'done'): ").strip()
