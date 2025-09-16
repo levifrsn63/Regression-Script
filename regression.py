@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
-print("=== Simple Regression Tool ===")
+print("=== Regression Tool ===")
 print("Enter your data points (x and y values). Type 'done' when finished.\n")
 
 X, y = [], []
