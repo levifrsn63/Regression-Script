@@ -1,49 +1,41 @@
-import streamlit as st
 import numpy as np
-import pandas as pd
 from sklearn.linear_model import LinearRegression
-import matplotlib.pyplot as plt
 
-st.title("📈 Simple Regression Tool")
+print("=== Simple Regression Tool ===")
+print("Enter your data points (x and y values). Type 'done' when finished.\n")
 
-st.write("Enter data points (x and y) and fit a regression line.")
-
-# Data input
-data = st.text_area("Enter your data (format: x,y per line)", "1,2\n2,4\n3,5\n4,4\n5,5")
-
-# Parse data
 X, y = [], []
-for line in data.strip().split("\n"):
+
+# Collect data points
+while True:
+    entry = input("Enter x,y (or 'done' to finish): ").strip()
+    if entry.lower() == "done":
+        break
     try:
-        x_val, y_val = line.split(",")
+        x_val, y_val = entry.split(",")
         X.append([float(x_val)])
         y.append(float(y_val))
     except:
-        pass
+        print("⚠️ Please enter values in the format: x,y (e.g. 2,4)")
 
-if len(X) >= 2:
-    model = LinearRegression()
-    model.fit(X, y)
+if len(X) < 2:
+    print("❌ Need at least 2 points for regression.")
+    exit()
 
-    st.success(f"✅ Model trained: y = {model.coef_[0]:.2f} * x + {model.intercept_:.2f}")
+# Train model
+model = LinearRegression()
+model.fit(X, y)
 
-    # Prediction
-    new_x = st.number_input("Enter a new x value to predict y", value=6.0)
-    pred = model.predict([[new_x]])[0]
-    st.write(f"📌 Predicted y: **{pred:.2f}**")
+print("\n✅ Model trained!")
+print(f"Equation: y = {model.coef_[0]:.2f} * x + {model.intercept_:.2f}")
 
-    # Plot
-    X_np = np.array(X)
-    y_np = np.array(y)
-    y_line = model.predict(X_np)
-
-    fig, ax = plt.subplots()
-    ax.scatter(X_np, y_np, color="blue", label="Data points")
-    ax.plot(X_np, y_line, color="red", label="Regression line")
-    ax.set_xlabel("X")
-    ax.set_ylabel("Y")
-    ax.legend()
-    st.pyplot(fig)
-
-else:
-    st.warning("⚠️ Please enter at least 2 data points.")
+# Predict loop
+while True:
+    new_x = input("\nEnter a new x value to predict y (or 'exit' to quit): ").strip()
+    if new_x.lower() == "exit":
+        break
+    try:
+        prediction = model.predict([[float(new_x)]])[0]
+        print(f"📈 Predicted y: {prediction:.2f}")
+    except:
+        print("⚠️ Please enter a number.")
