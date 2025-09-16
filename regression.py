@@ -5,24 +5,30 @@ import statsmodels.api as sm
 import os
 
 print("=== Regression Tool ===")
-print("You can either:\n1. Enter data points manually\n2. Load from a CSV file in the same folder.\n")
+print("1. Manual entry")
+print("2. Load from CSV file\n")
+
+choice = input("Select option (1 or 2): ").strip()
 
 X, y = [], []
 
-choice = input("Type 'manual' for manual entry or 'file' to load CSV: ").strip().lower()
-
-if choice == "file":
+if choice == "2":
+    # List CSV files in current folder
     files = [f for f in os.listdir() if f.endswith(".csv")]
     if not files:
         print("No CSV files found in this folder.")
         exit()
-    
+
     print("\nAvailable CSV files:")
     for i, f in enumerate(files, start=1):
         print(f"{i}. {f}")
-    
-    idx = int(input("Select file number: ")) - 1
-    df = pd.read_csv(files[idx])
+
+    try:
+        idx = int(input("\nSelect file number: ")) - 1
+        df = pd.read_csv(files[idx])
+    except:
+        print("Invalid selection.")
+        exit()
 
     print("\nColumns found:", list(df.columns))
     x_col = input("Enter column name for X: ").strip()
@@ -36,9 +42,9 @@ if choice == "file":
         exit()
 
 else:
-    print("Enter your data points (x and y values). Type 'done' when finished.\n")
+    print("\nEnter data points (x and y). Type 'done' when finished.\n")
     while True:
-        entry = input("Enter x,y (or 'done' to finish): ").strip()
+        entry = input("x,y (or 'done'): ").strip()
         if entry.lower() == "done":
             break
         try:
@@ -46,18 +52,18 @@ else:
             X.append([float(x_val)])
             y.append(float(y_val))
         except:
-            print(" Please enter values in the format: x,y (e.g. 2,4)")
+            print(" Format: x,y (e.g. 2,4)")
 
     if len(X) < 2:
-        print("ERROR: Need at least 2 points for regression.")
+        print("ERROR: Need at least 2 points.")
         exit()
 
-# Train with sklearn (for prediction loop)
+# Train with sklearn
 model = LinearRegression()
 model.fit(X, y)
 
-# Train with statsmodels (for diagnostics)
-X_sm = sm.add_constant(X)  # add intercept
+# Train with statsmodels for diagnostics
+X_sm = sm.add_constant(X)
 ols_model = sm.OLS(y, X_sm).fit()
 
 print("\n=== Model Summary ===")
@@ -78,7 +84,7 @@ print("Coefficient: Must be economically interpretable\n")
 
 # Prediction loop
 while True:
-    new_x = input("\nEnter a new x value to predict y (or 'exit' to quit): ").strip()
+    new_x = input("\nEnter new x to predict y (or 'exit'): ").strip()
     if new_x.lower() == "exit":
         break
     try:
