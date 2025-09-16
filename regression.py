@@ -16,17 +16,17 @@ while True:
         X.append([float(x_val)])
         y.append(float(y_val))
     except:
-        print("⚠️ Please enter values in the format: x,y (e.g. 2,4)")
+        print(" Please enter values in the format: x,y (e.g. 2,4)")
 
 if len(X) < 2:
-    print("❌ Need at least 2 points for regression.")
+    print("ERROR: Need at least 2 points for regression.")
     exit()
 
 # Train model
 model = LinearRegression()
 model.fit(X, y)
 
-print("\n✅ Model trained!")
+print("\n Model trained!")
 print(f"Equation: y = {model.coef_[0]:.2f} * x + {model.intercept_:.2f}")
 
 # Predict loop
@@ -36,6 +36,6 @@ while True:
         break
     try:
         prediction = model.predict([[float(new_x)]])[0]
-        print(f"📈 Predicted y: {prediction:.2f}")
+        print(f" Predicted y: {prediction:.2f}")
     except:
-        print("⚠️ Please enter a number.")
+        print("Please enter a number.")
